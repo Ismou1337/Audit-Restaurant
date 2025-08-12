@@ -7,10 +7,20 @@ src/config.php
 
 # Upload directories
 uploads/
-photos/audits/
-photos/thumbs/
+!uploads/temp/
 !uploads/temp/.gitkeep
+
+# Image optimization strategy
+# Exclude large original images (3MB each - server only)
+photos/audits/*/
 !photos/audits/.gitkeep
+
+# Include optimized images for GitHub (300-500KB each)
+!photos/optimized/
+!photos/thumbs/
+
+# Keep directory structure
+!photos/audits/
 !photos/thumbs/.gitkeep
 
 # Logs

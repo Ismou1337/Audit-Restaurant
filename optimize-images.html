@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Optimization for GitHub</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 20px auto; padding: 20px; }
+        .success { color: #28a745; background: #d4edda; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .warning { color: #856404; background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .error { color: #721c24; background: #f8d7da; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .info { color: #0c5460; background: #d1ecf1; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; text-decoration: none; display: inline-block; }
+        .btn-success { background: #28a745; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-danger { background: #dc3545; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-card { background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #007bff; }
+        .progress { width: 100%; height: 20px; background-color: #e9ecef; border-radius: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: #28a745; transition: width 0.3s ease; }
+        #optimization-results { display: none; }
+        .before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🖼️ Image Optimization for GitHub Integration</h1>
+    
+    <div class="info">
+        <strong>Problem:</strong> Your 3MB images are too large for GitHub. This tool will create optimized versions (300-500KB) and thumbnails (50KB) for GitHub while keeping originals on the server.
+    </div>
+
+    <div id="step1">
+        <h2>📁 Step 1: Scan Date Folders</h2>
+        <button class="btn" onclick="scanDateFolders()">🔍 Scan for Date Folders</button>
+        <div id="date-folders-list"></div>
+    </div>
+
+    <div id="step2" style="display: none;">
+        <h2>⚡ Step 2: Optimize Images</h2>
+        <div id="optimization-controls"></div>
+        <div id="optimization-progress"></div>
+        <div id="optimization-results"></div>
+    </div>
+
+    <div id="step3" style="display: none;">
+        <h2>🚀 Step 3: GitHub Integration</h2>
+        <div class="success">
+            <h3>✅ Optimization Complete!</h3>
+            <p>Your images are now GitHub-ready:</p>
+            <ul>
+                <li><strong>Optimized images:</strong> photos/optimized/ (for web display)</li>
+                <li><strong>Thumbnails:</strong> photos/thumbs/ (for quick loading)</li>
+                <li><strong>Originals:</strong> photos/audits/ (server only, not in Git)</li>
+            </ul>
+        </div>
+        
+        <h3>🔧 Update .gitignore</h3>
+        <div class="info">
+            <p>Add this to your .gitignore to exclude original large images:</p>
+            <pre>
+# Exclude large original images (server only)
+photos/audits/*/
+!photos/audits/.gitkeep
+
+# Include optimized images (for GitHub)
+!photos/optimized/
+!photos/thumbs/
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        let dateFolders = [];
+        let currentOptimization = null;
+
+        async function scanDateFolders() {
+            try {
+                const response = await fetch('image-optimizer.php?action=list_dates');
+                const data = await response.json();
+                
+                if (data.date_folders && data.date_folders.length > 0) {
+                    dateFolders = data.date_folders;
+                    displayDateFolders(data.date_folders);
+                    document.getElementById('step2').style.display = 'block';
+                } else {
+                    document.getElementById('date-folders-list').innerHTML = 
+                        '<div class="warning">No date folders found in photos/audits/</div>';
+                }
+            } catch (error) {
+                document.getElementById('date-folders-list').innerHTML = 
+                    '<div class="error">Error scanning folders: ' + error.message + '</div>';
+            }
+        }
+
+        function displayDateFolders(folders) {
+            const html = `
+                <div class="success">
+                    <h3>📅 Found ${folders.length} date folders:</h3>
+                    <p>${folders.join(', ')}</p>
+                </div>
+            `;
+            document.getElementById('date-folders-list').innerHTML = html;
+            
+            // Create optimization controls
+            const controlsHtml = `
+                <div class="before-after">
+                    <div>
+                        <h4>Before Optimization:</h4>
+                        <ul>
+                            <li>❌ 3MB per image</li>
+                            <li>❌ Too large for GitHub</li>
+                            <li>❌ Slow loading</li>
+                            <li>❌ Repository bloat</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>After Optimization:</h4>
+                        <ul>
+                            <li>✅ ~400KB optimized images</li>
+                            <li>✅ ~50KB thumbnails</li>
+                            <li>✅ GitHub-friendly sizes</li>
+                            <li>✅ Fast web display</li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="optimizeAllFolders()">🚀 Optimize All Images</button>
+                <button class="btn btn-warning" onclick="optimizeSpecificFolder()">🎯 Choose Specific Date</button>
+            `;
+            document.getElementById('optimization-controls').innerHTML = controlsHtml;
+        }
+
+        async function optimizeAllFolders() {
+            document.getElementById('optimization-progress').innerHTML = 
+                '<div class="info">🔄 Starting optimization of all folders...</div>';
+            
+            const results = [];
+            let totalProcessed = 0;
+            let totalSuccess = 0;
+            let totalOriginalSize = 0;
+            let totalOptimizedSize = 0;
+            let totalSpaceSaved = 0;
+
+            for (let i = 0; i < dateFolders.length; i++) {
+                const folder = dateFolders[i];
+                const progress = Math.round((i / dateFolders.length) * 100);
+                
+                document.getElementById('optimization-progress').innerHTML = `
+                    <div class="info">
+                        <p>🔄 Processing folder: ${folder} (${i + 1}/${dateFolders.length})</p>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    const response = await fetch(`image-optimizer.php?action=process_date&date=${folder}`);
+                    const result = await response.json();
+                    
+                    if (result.stats) {
+                        totalProcessed += result.stats.total_images;
+                        totalSuccess += result.stats.successful;
+                        totalOriginalSize += result.stats.original_size_mb;
+                        totalOptimizedSize += result.stats.optimized_size_mb;
+                        totalSpaceSaved += result.stats.space_saved_mb;
+                    }
+                    
+                    results.push(result);
+                } catch (error) {
+                    results.push({error: 'Failed to process ' + folder + ': ' + error.message});
+                }
+            }
+
+            // Show final results
+            displayOptimizationResults(results, {
+                totalProcessed,
+                totalSuccess,
+                totalOriginalSize: totalOriginalSize.toFixed(2),
+                totalOptimizedSize: totalOptimizedSize.toFixed(2),
+                totalSpaceSaved: totalSpaceSaved.toFixed(2)
+            });
+        }
+
+        function displayOptimizationResults(results, totals) {
+            document.getElementById('optimization-progress').innerHTML = 
+                '<div class="success">✅ Optimization completed!</div>';
+
+            const statsHtml = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>📊 Total Images</h4>
+                        <p><strong>${totals.totalProcessed}</strong></p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>✅ Successfully Optimized</h4>
+                        <p><strong>${totals.totalSuccess}</strong></p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>📦 Original Size</h4>
+                        <p><strong>${totals.totalOriginalSize} MB</strong></p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>🗜️ Optimized Size</h4>
+                        <p><strong>${totals.totalOptimizedSize} MB</strong></p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>💾 Space Saved</h4>
+                        <p><strong>${totals.totalSpaceSaved} MB</strong></p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>📈 Compression Ratio</h4>
+                        <p><strong>${Math.round((totals.totalSpaceSaved / totals.totalOriginalSize) * 100)}%</strong></p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('optimization-results').innerHTML = statsHtml;
+            document.getElementById('optimization-results').style.display = 'block';
+            document.getElementById('step3').style.display = 'block';
+        }
+
+        function optimizeSpecificFolder() {
+            const folder = prompt('Enter date folder (e.g., 2025-08-12):', dateFolders[0] || '');
+            if (folder && dateFolders.includes(folder)) {
+                optimizeSingleFolder(folder);
+            } else if (folder) {
+                alert('Folder not found. Available folders: ' + dateFolders.join(', '));
+            }
+        }
+
+        async function optimizeSingleFolder(folder) {
+            document.getElementById('optimization-progress').innerHTML = 
+                `<div class="info">🔄 Processing folder: ${folder}...</div>`;
+
+            try {
+                const response = await fetch(`image-optimizer.php?action=process_date&date=${folder}`);
+                const result = await response.json();
+                
+                displayOptimizationResults([result], {
+                    totalProcessed: result.stats?.total_images || 0,
+                    totalSuccess: result.stats?.successful || 0,
+                    totalOriginalSize: result.stats?.original_size_mb || 0,
+                    totalOptimizedSize: result.stats?.optimized_size_mb || 0,
+                    totalSpaceSaved: result.stats?.space_saved_mb || 0
+                });
+            } catch (error) {
+                document.getElementById('optimization-progress').innerHTML = 
+                    `<div class="error">Error processing ${folder}: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
