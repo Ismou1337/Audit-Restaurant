@@ -4,23 +4,23 @@
 
 // Database connection settings
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'your_database_name');
-define('DB_USER', 'your_database_user');
-define('DB_PASS', 'your_database_password');
+define('DB_NAME', 'bncbqztkbh');
+define('DB_USER', 'bncbqztkbh');
+define('DB_PASS', '4j9DZT5bZs');
 
 // Set the default timezone
 date_default_timezone_set('Europe/Paris');
 
 // Email configuration
-define('SMTP_HOST', 'your_smtp_host');
+define('SMTP_HOST', 'winwin.genious.net');
 define('SMTP_PORT', 587);
-define('SMTP_USER', 'your_email@domain.com');
-define('SMTP_PASS', 'your_email_password');
-define('FROM_EMAIL', 'your_email@domain.com');
-define('FROM_NAME', 'Audit System');
+define('SMTP_USER', 'webmaster@restaurail.ma');
+define('SMTP_PASS', 'Restaurail2@25');
+define('FROM_EMAIL', 'webmaster@restaurail.ma');
+define('FROM_NAME', 'Audit Restaurant System');
 
 // Application settings
-define('APP_URL', 'https://your-domain.com');
+define('APP_URL', 'https://check.restaurail.ma');
 define('UPLOAD_PATH', __DIR__ . '/../uploads/');
 define('PHOTOS_PATH', __DIR__ . '/../photos/');
 

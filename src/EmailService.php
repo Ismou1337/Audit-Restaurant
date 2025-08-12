@@ -1,23 +1,39 @@
 <?php
 
+// Import PHPMailer classes
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 class EmailService {
     private $mailer;
 
     public function __construct() {
-        // Initialize the mailer (e.g., PHPMailer, SwiftMailer, etc.)
-        $this->mailer = new PHPMailer(true); // Assuming PHPMailer is used
+        // Load configuration
+        if (file_exists(__DIR__ . '/config.php')) {
+            require_once __DIR__ . '/config.php';
+        }
+        
+        // Initialize PHPMailer with your working SMTP settings
+        $this->mailer = new PHPMailer(true);
         $this->mailer->isSMTP();
-        $this->mailer->Host = 'smtp.example.com'; // Set the SMTP server
+        $this->mailer->Host = defined('SMTP_HOST') ? SMTP_HOST : 'winwin.genious.net';
         $this->mailer->SMTPAuth = true;
-        $this->mailer->Username = 'your_email@example.com'; // SMTP username
-        $this->mailer->Password = 'your_password'; // SMTP password
+        $this->mailer->Username = defined('SMTP_USER') ? SMTP_USER : 'webmaster@restaurail.ma';
+        $this->mailer->Password = defined('SMTP_PASS') ? SMTP_PASS : 'Restaurail2@25';
         $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $this->mailer->Port = 587; // TCP port to connect to
+        $this->mailer->Port = defined('SMTP_PORT') ? SMTP_PORT : 587;
+        $this->mailer->CharSet = 'UTF-8';
     }
 
     public function sendAuditReport($data, $recipients) {
         try {
-            $this->mailer->setFrom('from@example.com', 'Audit System');
+            // Use your working email settings
+            $fromEmail = defined('FROM_EMAIL') ? FROM_EMAIL : 'webmaster@restaurail.ma';
+            $fromName = defined('FROM_NAME') ? FROM_NAME : 'Audit Restaurant System';
+            
+            $this->mailer->setFrom($fromEmail, $fromName);
+            
             foreach ($recipients as $recipient) {
                 $this->mailer->addAddress($recipient);
             }
@@ -28,9 +44,9 @@ class EmailService {
             $this->mailer->AltBody = strip_tags($this->generateEmailBody($data));
 
             return $this->mailer->send();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Erreur lors de l'envoi de l'email: " . $this->mailer->ErrorInfo);
-            throw new Exception("Erreur lors de l'envoi de l'email: " . $e->getMessage());
+            throw new \Exception("Erreur lors de l'envoi de l'email: " . $e->getMessage());
         }
     }
 
