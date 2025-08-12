@@ -4,19 +4,19 @@
 
 // Database connection settings
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'bncbqztkbh');
-define('DB_USER', 'bncbqztkbh');
-define('DB_PASS', '4j9DZT5bZs');
+define('DB_NAME', 'your_database_name');
+define('DB_USER', 'your_database_user');
+define('DB_PASS', 'your_database_password');
 
 // Set the default timezone
 date_default_timezone_set('Europe/Paris');
 
 // Email configuration
-define('SMTP_HOST', 'winwin.genious.net');
+define('SMTP_HOST', 'your.smtp.server.com');
 define('SMTP_PORT', 587);
-define('SMTP_USER', 'webmaster@restaurail.ma');
-define('SMTP_PASS', 'Restaurail2@25');
-define('FROM_EMAIL', 'webmaster@restaurail.ma');
+define('SMTP_USER', 'your_email@domain.com');
+define('SMTP_PASS', 'your_email_password');
+define('FROM_EMAIL', 'noreply@domain.com');
 define('FROM_NAME', 'Audit Restaurant System');
 
 // Application settings

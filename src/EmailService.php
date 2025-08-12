@@ -14,13 +14,13 @@ class EmailService {
             require_once __DIR__ . '/config.php';
         }
         
-        // Initialize PHPMailer with your working SMTP settings
+        // Initialize PHPMailer
         $this->mailer = new PHPMailer(true);
         $this->mailer->isSMTP();
-        $this->mailer->Host = defined('SMTP_HOST') ? SMTP_HOST : 'winwin.genious.net';
+        $this->mailer->Host = defined('SMTP_HOST') ? SMTP_HOST : 'localhost';
         $this->mailer->SMTPAuth = true;
-        $this->mailer->Username = defined('SMTP_USER') ? SMTP_USER : 'webmaster@restaurail.ma';
-        $this->mailer->Password = defined('SMTP_PASS') ? SMTP_PASS : 'Restaurail2@25';
+        $this->mailer->Username = defined('SMTP_USER') ? SMTP_USER : '';
+        $this->mailer->Password = defined('SMTP_PASS') ? SMTP_PASS : '';
         $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $this->mailer->Port = defined('SMTP_PORT') ? SMTP_PORT : 587;
         $this->mailer->CharSet = 'UTF-8';
