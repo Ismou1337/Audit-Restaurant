@@ -1,0 +1,43 @@
+# PHP
+vendor/
+composer.lock
+
+# Configuration files (keep templates, ignore actual config)
+src/config.php
+
+# Upload directories
+uploads/
+photos/audits/
+photos/thumbs/
+!uploads/temp/.gitkeep
+!photos/audits/.gitkeep
+!photos/thumbs/.gitkeep
+
+# Logs
+*.log
+
+# Cache
+cache/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+temp/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Database backups
+*.sql.backup
+backup/

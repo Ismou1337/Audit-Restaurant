@@ -1,0 +1,20 @@
+# This file defines attributes for Git, such as line endings and merge strategies.
+
+* text=auto
+*.php text
+*.js text
+*.css text
+*.html text
+*.json text
+*.sql text
+*.md text
+
+# Custom merge strategies
+*.jpg merge=ours
+*.jpeg merge=ours
+*.png merge=ours
+*.gif merge=ours
+
+# Ensure consistent line endings
+*.sh eol=lf
+*.bat eol=crlf
