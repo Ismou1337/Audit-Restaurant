@@ -1,6 +1,19 @@
 <?php
 
 session_start();
+
+// Check if config.php exists
+if (!file_exists('config.php')) {
+    die('
+    <div style="font-family: Arial; padding: 20px; background: #fee; color: #c33; border-radius: 5px; margin: 20px;">
+        <h3>⚠️ Configuration Missing</h3>
+        <p><strong>config.php</strong> file not found.</p>
+        <p>Please copy <strong>config.example.php</strong> to <strong>config.php</strong> and update with your database settings.</p>
+        <p><a href="login-admin.php">← Back to Login</a></p>
+    </div>
+    ');
+}
+
 require_once 'config.php';
 
 // Vérifier l'authentification

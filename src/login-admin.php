@@ -8,6 +8,7 @@ if (isset($_SESSION['admin_connecte']) && $_SESSION['admin_connecte'] === true) 
 }
 
 $erreur_login = '';
+$config_exists = file_exists('config.php');
 
 if ($_POST) {
     $username = $_POST['username'] ?? '';
@@ -149,6 +150,12 @@ if ($_POST) {
         <?php if ($erreur_login): ?>
             <div class="error-message">
                 <?php echo htmlspecialchars($erreur_login); ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!$config_exists): ?>
+            <div class="error-message">
+                ⚠️ config.php file not found. Please copy config.example.php to config.php and update with your database settings.
             </div>
         <?php endif; ?>
         
